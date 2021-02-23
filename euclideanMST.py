@@ -1,6 +1,7 @@
-# Kruskals Algorithm implementation
+# Kruskal's Algorithm implementation
 # ∀ u, v  V, u = (x1,y1), v = (x2,y2)
 # w(u,v) = d(u, v) = 𝑛𝑒𝑎𝑟𝑒𝑠𝑡𝑖𝑛𝑡 √(𝑥1 − 𝑥2)^2 + (𝑦1 − 𝑦2)^2
+# By: Kyle Huang
 import itertools # Used to find all possible sets
 import math
 
