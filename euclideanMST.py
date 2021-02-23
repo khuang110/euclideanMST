@@ -11,6 +11,7 @@ import math
 class Set:
     def __init__(self, n):
         self.set = [-1]*n
+        self.ln = 0
 
     def union(self, r1, r2):
 
@@ -20,6 +21,7 @@ class Set:
             if self.set[r1] == self.set[r1]:
                 self.set[r1] -= 1
             self.set[r2] = r1
+        self.ln += 1
 
     def find(self, r):
         x = r[0] + r[1]
@@ -67,7 +69,8 @@ class Graph:
         j = 0
         mst_edges = []
         # = [k for k in self.sets]
-        while i < len(self.sets):
+
+        while i < len(self.sets) and vertex_sets.ln < self._k-1:
             curr_edge = self.sets[i]
 
             r1 = vertex_sets.find(curr_edge[0][0])
@@ -75,26 +78,25 @@ class Graph:
 
             if r1 != r2:
                 mst_edges.append(curr_edge[1])
-                res.append([r1, r2])
+                res.append(curr_edge)
                 vertex_sets.union(r1, r2)
 
             i += 1
         min_cost = 0
-        for weight in mst_edges:
-            min_cost += weight
-        from pprint import pprint
-        pprint(mst_edges)
-        print("MST weight: ", min_cost)
+        print("Edges in MST")
+        print("Distance              Point (x, y)")
+        for weight in range(0, len(mst_edges)):
+            min_cost += mst_edges[weight]
+            print_edge(res[weight])
 
-    def prims(self):
-        res = [-1]*self._k
-        key = [[2147483647, 2147483647]]*self._k
-        key[0] = [0, 0]
+        print("Total distance: ", min_cost)
 
-        #for i in range(0, self._k):
-           # u = self.find(key, res)
+def print_edge(e):
+    x1, y1 = e[0][0]
+    x2, y2 = e[0][1]
+    weight = e[1]
+    print(str(weight)+"                     (" + str(x1) + ", " + str(y1) + ")  -   (" + str(x2) + ", " + str(y2) + ")")
 
-           # res[u] =
 
 
 
@@ -139,13 +141,21 @@ def process_lines(lines):
 
 def main():
     test_cases_ = process_lines(read_file())
-    test_cases_[0].find_sets()
-    #test_cases_[0].find_edge_distance()
-    print("___________________")
-    from pprint import pprint
-    pprint(test_cases_[0].sets)
-    print("____________________")
-    test_cases_[0].kruskal()
+
+    # test_cases_[1].find_sets()
+    # #test_cases_[0].find_edge_distance()
+    # print("___________________")
+    # from pprint import pprint
+    # pprint(test_cases_[1].sets)
+    # print("____________________")
+    # test_cases_[1].kruskal()
+
+    for i in range(0, len(test_cases_)):
+        print("Test case: ", i+1)
+        test_cases_[i].find_sets()
+        #test_cases_[0].find_edge_distance()
+        test_cases_[i].kruskal()
+        print()
 
 
 if __name__=="__main__":
