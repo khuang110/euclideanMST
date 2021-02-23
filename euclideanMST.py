@@ -9,18 +9,20 @@ import math
 # Disjoint set
 # Union - Find
 class Set:
-    def __init__(self):
-        self.set = []
+    def __init__(self, n):
+        self.set = [-1]*n
 
-    def union(self, root1, root2):
-        if self.set[root1] < self.set[root2]:
-            self.set[root1] = root2
+    def union(self, r1, r2):
+
+        if self.set[r1] < self.set[r2]:
+            self.set[r1] = r2
         else:
-            if self.set[root1] == self.set[root2]:
-                self.set[root1] -= 1
-            self.set[root2] = root1
+            if self.set[r1] == self.set[r1]:
+                self.set[r1] -= 1
+            self.set[r2] = r1
 
-    def find(self, x):
+    def find(self, r):
+        x = r[0] + r[1]
         if self.set[x] < 0:
             return x
         n = 0
@@ -35,37 +37,73 @@ class Graph:
     # sets: list of disjoint sets
     def __init__(self, _k):
         self._k = _k
-        self.sets = [[]]*2
+        self.sets = {}
         self.g = []
 
     def add_vertex(self, x, y):
-        self.g.append([x, y])
+        heapq.heappush(self.g, [x, y])
+        #self.g.append([x, y])
+
+    def help_sort(self, s):
+        d = calc_distance(s[0], 1)
+        return d
 
     def find_sets(self):
+        idx = 0
+        s = {}
         for i in itertools.combinations(self.g, 2):
-            self.sets[0].append(i)
-            self.sets[1].append(-1)
-            # s = Set()
-            # s.union(i[0], i[1])
-            # self.sets.append(s)
-
-    def find_edge_distance(self):
-        for i, set_ in enumerate(self.sets[0]):
-            if i % 2 == 1:
-                continue
-            print("set in edge: ", set_)
-            print(i)
-            d = calc_distance(set_[0])
-            self.sets[1][i] = d
+            c = calc_distance(i, idx)
+            p = {idx: [i, c]}
+            s.update(p)
+            idx += 1
+        self.sets = [val for key, val in s.items() if val != -1]
+        self.sets.sort(key=self.help_sort)
 
 
+    def kruskal(self):
+        vertex_sets = Set(self._k*100)
+        res = []
+        i = 0
+        j = 0
+        mst_edges = []
+        # = [k for k in self.sets]
+        while i < len(self.sets):
+            curr_edge = self.sets[i]
 
-def calc_distance(set_):
-    [x1, y1] = set_[0]
-    x2, y2 = set_[1]
+            r1 = vertex_sets.find(curr_edge[0][0])
+            r2 = vertex_sets.find(curr_edge[0][1])
+
+            if r1 != r2:
+                mst_edges.append(curr_edge[1])
+                res.append([r1, r2])
+                vertex_sets.union(r1, r2)
+
+            i += 1
+        min_cost = 0
+        for weight in mst_edges:
+            min_cost += weight
+        from pprint import pprint
+        pprint(mst_edges)
+        print("MST weight: ", min_cost)
+
+    def prims(self):
+        res = [-1]*self._k
+        key = [[2147483647, 2147483647]]*self._k
+        key[0] = [0, 0]
+
+        #for i in range(0, self._k):
+           # u = self.find(key, res)
+
+           # res[u] =
+
+
+
+def calc_distance(set_, key):
+    #s1, s2 = set_[key][0]
+    x1, y1 = set_[0]#, s1[1]
+    x2, y2 = set_[1]#, s2[1]
     distance = math.sqrt((x1-x2)**2+(y1-y2)**2)
-    print(distance)
-    return distance
+    return round(distance)
 
 
 # extract data from graph.txt
@@ -99,17 +137,15 @@ def process_lines(lines):
     return test_cases
 
 
-
-def kruskal():
-    s = Set()
-    i = 0
-
-
 def main():
     test_cases_ = process_lines(read_file())
     test_cases_[0].find_sets()
-    test_cases_[0].find_edge_distance()
-    calc_distance(test_cases_[0].sets[0][0])
+    #test_cases_[0].find_edge_distance()
+    print("___________________")
+    from pprint import pprint
+    pprint(test_cases_[0].sets)
+    print("____________________")
+    test_cases_[0].kruskal()
 
 
 if __name__=="__main__":
